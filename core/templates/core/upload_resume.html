@@ -1,0 +1,71 @@
+<!-- core/templates/core/upload_resume.html -->
+
+{% extends 'core/base.html' %}
+{% load core_tags %}
+
+{% block title %}
+    {% if job_form %}
+        Enter Job Details
+    {% else %}
+        Upload Resume
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    {% if job_form %}
+                        Enter Job Details
+                    {% else %}
+                        Upload Resume
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if job_form %}
+                    <p class="mb-4">Enter the job information and paste the job description to compare against your resume.</p>
+                    <form method="post" action="{% url 'job_description' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.job_title.id_for_label }}" class="form-label">Job Title</label>
+                            {{ form.job_title|add_class:"form-control" }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.company.id_for_label }}" class="form-label">Company</label>
+                            {{ form.company|add_class:"form-control" }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                            {{ form.location|add_class:"form-control" }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.job_description.id_for_label }}" class="form-label">Job Description</label>
+                            {{ form.job_description|add_class:"form-control" }}
+                            <div class="form-text">Paste the complete job description here.</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Calculate Match</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p class="mb-4">Upload your resume in PDF or text format to begin the matching process.</p>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.file.id_for_label }}" class="form-label">Resume File</label>
+                            {{ form.file|add_class:"form-control" }}
+                            <div class="form-text">Supported formats: PDF, TXT</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Upload Resume</button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

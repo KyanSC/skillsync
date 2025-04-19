@@ -1,0 +1,134 @@
+<!-- core/templates/core/match_results.html -->
+{% extends 'core/base.html' %}
+{% load core_tags %}
+
+{% block title %}Match Results - {{ job.job_title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Match Results</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>{{ job.job_title }}</h4>
+                        <p>
+                            <strong>Company:</strong> {{ job.company }}<br>
+                            <strong>Location:</strong> {{ job.location }}<br>
+                            <strong>Date Added:</strong> {{ job.date_added|date:"F j, Y" }}
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="match-gauge">
+                            <svg width="200" height="200" viewBox="0 0 200 200">
+                                <!-- Background circle -->
+                                <circle cx="100" cy="100" r="90" fill="none" stroke="#e6e6e6" stroke-width="20"/>
+                                
+                                <!-- Adjust the stroke-dasharray and stroke-dashoffset with inline style -->
+                                {% with dasharray=565.48 %}
+                                {% with offset=dasharray|floatformat:2 %}
+                                {% with progress=job.match_percentage|floatformat:2 %}
+                                {% with dashoffset=offset|subtract:offset|multiply:progress|divide:100|floatformat:2 %}
+                                <circle cx="100" cy="100" r="90" fill="none" 
+                                        stroke="{% if job.match_percentage >= 80 %}#28a745{% elif job.match_percentage >= 60 %}#ffc107{% else %}#dc3545{% endif %}" 
+                                        stroke-width="20"
+                                        stroke-dasharray="{{ dasharray }}"
+                                        stroke-dashoffset="{{ dashoffset }}"
+                                        transform="rotate(-90 100 100)"/>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </svg>
+                            <div class="match-gauge-inner">
+                                <h2>{{ job.match_percentage }}%</h2>
+                                <p>Match Score</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-warning">
+                        <h4 class="card-title mb-0">Missing Keywords</h4>
+                    </div>
+                    <div class="card-body keyword-list">
+                        <p class="card-text">These keywords from the job description were not found in your resume:</p>
+                        <ul class="list-group">
+                            {% for keyword in job.missing_keywords.split|slice:":10" %}
+                                <li class="list-group-item">{{ keyword }}</li>
+                            {% empty %}
+                                <li class="list-group-item">No missing keywords found!</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-info">
+                        <h4 class="card-title mb-0">Recommendations</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Based on your match score:</p>
+                        <ul class="list-group">
+                            {% if job.match_percentage >= 80 %}
+                                <li class="list-group-item list-group-item-success">Your resume is a strong match for this position!</li>
+                                <li class="list-group-item">Consider addressing the few missing keywords in your cover letter</li>
+                            {% elif job.match_percentage >= 60 %}
+                                <li class="list-group-item list-group-item-warning">Your resume is a moderate match for this position</li>
+                                <li class="list-group-item">Consider updating your resume to include more of the missing keywords</li>
+                                <li class="list-group-item">Emphasize relevant experience in your cover letter</li>
+                            {% else %}
+                                <li class="list-group-item list-group-item-danger">Your resume needs significant updates for this position</li>
+                                <li class="list-group-item">Add the missing keywords to your resume where applicable</li>
+                                <li class="list-group-item">Consider getting more experience in the required areas</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="card-title mb-0">Notes</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'update_notes' job.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <textarea class="form-control" name="notes" rows="4">{{ job.notes }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Notes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h4 class="card-title mb-0">Job Description</h4>
+            </div>
+            <div class="card-body">
+                <div class="job-description">
+                    {{ job.job_description|linebreaks }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'upload_resume' %}" class="btn btn-primary">Upload New Resume</a>
+            <a href="{% url 'job_description' %}" class="btn btn-success">Try Another Job</a>
+            <a href="{% url 'job_list' %}" class="btn btn-secondary">View All Jobs</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

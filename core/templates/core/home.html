@@ -1,0 +1,50 @@
+<!-- core/templates/core/home.html -->
+{% extends 'core/base.html' %}
+
+{% block title %}SkillSync - Resume Job Matching Tool{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h2 class="mb-4">Welcome to SkillSync</h2>
+        <p class="lead mb-5">
+            Match your resume against job descriptions to see how well your skills align and identify missing keywords.
+        </p>
+        
+        <div class="d-grid gap-3 col-md-6 mx-auto">
+            <a href="{% url 'upload_resume' %}" class="btn btn-primary btn-lg">Upload Resume</a>
+            <a href="{% url 'job_list' %}" class="btn btn-outline-secondary btn-lg">View Previous Matches</a>
+        </div>
+        
+        <div class="mt-5">
+            <h3>How It Works</h3>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">1. Upload Resume</h5>
+                            <p class="card-text">Upload your resume in PDF or text format</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">2. Enter Job Details</h5>
+                            <p class="card-text">Paste the job description and provide basic information</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">3. Get Match Results</h5>
+                            <p class="card-text">See your match score and identify missing keywords</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
